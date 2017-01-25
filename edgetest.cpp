@@ -7,7 +7,7 @@ using namespace cv;
 
 int main(int, char**)
 {
-    system("./setExposure.sh 1"); // sets exposure of video1 to 1
+    system(("./setExposure.sh "+ std::to_string(CAMERAINTERFACE)).c_str()); // sets exposure of video1 to 1
     VideoCapture cap(CAMERAINTERFACE); // open camera
     if(!cap.isOpened()){  // check if we succeeded
     std::cout << "it didn't open :(" << std::endl;
