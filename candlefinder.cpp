@@ -5,10 +5,18 @@
 
 using namespace cv;
 
-int main(int, char**)
+int main(int argc, char* argv[])
 {
+  int cameraNum = CAMERAINTERFACE;
+  if(argc > 1) {
+    char * p;
+    cameraNum = strtol(argv[1], &p, 10);
+  }
+
+  std::cout << cameraNum << std::endl;
+
   /* Get camera feed */
-  system(("./setExposure.sh "+ std::to_string(CAMERAINTERFACE)).c_str()); // sets exposure of video1 to 1
+  system(("./setExposure.sh "+ std::to_string(cameraNum)).c_str()); // sets exposure of video1 to 1
   VideoCapture cap(CAMERAINTERFACE); // open camera
 
   if(!cap.isOpened()) {  // check if we succeeded
