@@ -43,8 +43,9 @@ int main(int, char**)
     std::vector<KeyPoint> keypoints;
     detector->detect( frame, keypoints);
     drawKeypoints( frame, keypoints, frame, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
-
-    //std::cout << keypoints.size() << std::endl;
+    if(keypoints.size() > 0) {
+      std::cout << "(" << keypoints[0].pt.x << ", " << keypoints[0].pt.y << ")" << std::endl;
+    }
 
     imshow("robovision", frame ); // show frame on computer output window
 
@@ -52,6 +53,7 @@ int main(int, char**)
     int keypress = waitKey(10)%255;
     if(keypress == 27){
       std::cout << "key pressed: " << keypress << std::endl;
+      std::cout << "see you later! :)" << std::endl;
       break;
     }
   }
