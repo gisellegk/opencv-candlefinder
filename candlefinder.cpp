@@ -27,16 +27,6 @@ int main(int argc, char* argv[])
   namedWindow("robovision",1); // computer output window
   namedWindow("robovision2",1);
 
-  /* Simple Blob Detector parameters
-  SimpleBlobDetector::Params params;
-  // Change thresholds
-  params.minThreshold = 10;
-  params.maxThreshold = 500;
-  // Filter by Area.
-  params.filterByArea = true;
-  params.minArea = 50;
-
-  Ptr<SimpleBlobDetector> detector = SimpleBlobDetector::create(params);*/
   RNG rng(12345);
   for(;;) //repeat forever
   {
@@ -53,47 +43,37 @@ int main(int argc, char* argv[])
     double maxValue = 255;
 
     // Binary Threshold
-    threshold(frame,frame, thresh, maxValue, 2);
+    threshold(frame,frame, thresh, maxValue, 1);
+    imshow("robovision2", frame);
+    bitwise_not(frame, frame); // invert colors - possibly unnecessary idk
 
-    bitwise_not(frame, frame); // invert colors - you are looking for the light but this searches for dark
-
-    /* Search for flame and draw a red circle around it */
-    std::vector<KeyPoint> keypoints;
-    //detector->detect( frame, keypoints);
-    //drawKeypoints( frame, keypoints, frame, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
-    if(keypoints.size() > 0) {
-      std::cout << "(" << keypoints[0].pt.x << ", " << keypoints[0].pt.y << ")" << std::endl;
-    }
+    /* Search for flame and draw a rectangle around it */
     std::vector<std::vector<Point> > contours;
     std::vector<Vec4i> hierarchy;
     findContours( frame, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
     /// Approximate contours to polygons + get bounding rects and circles
     std::vector<std::vector<Point> > contours_poly( contours.size() );
     std::vector<Rect> boundRect( contours.size() );
-    std::vector<Point2f>center( contours.size() );
-    std::vector<float>radius( contours.size() );
+    //std::vector<Point2f>center( contours.size() );
+    //std::vector<float>radius( contours.size() );
 
     for( int i = 0; i < contours.size(); i++ )
     { approxPolyDP( Mat(contours[i]), contours_poly[i], 3, true );
       boundRect[i] = boundingRect( Mat(contours_poly[i]) );
-      minEnclosingCircle( (Mat)contours_poly[i], center[i], radius[i] );
+      //minEnclosingCircle( (Mat)contours_poly[i], center[i], radius[i] );
     }
     /// Draw polygonal contour + bonding rects + circles
     Mat drawing = Mat::zeros( frame.size(), CV_8UC3 );
     for( int i = 0; i< contours.size(); i++ )
     {
+      Rect r = boundRect[i];
+      std::cout << "(" << (r.x+(r.width/2.0)) << ", " << (r.y+(r.height/2.0)) << ")" << std::endl;
       Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
       drawContours( drawing, contours_poly, i, color, 1, 8, std::vector<Vec4i>(), 0, Point() );
       rectangle( drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0 );
-      circle( drawing, center[i], (int)radius[i], color, 2, 8, 0 );
+      //circle( drawing, center[i], (int)radius[i], color, 2, 8, 0 );
     }
 
-    /*Canny( frame, frame, thresh, thresh*3, 3 );
-    Mat dst;
-    dst.create(frame.size(), frame.type());
-    dst = Scalar::all(0);
-    frame.copyTo(dst, frame);*/
-    imshow("robovision2", frame);
     imshow("robovision", drawing ); // show frame on computer output window
 
     /* Escape = kill program */
