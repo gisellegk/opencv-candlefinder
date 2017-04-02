@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
   params.minArea = 50;
 
   Ptr<SimpleBlobDetector> detector = SimpleBlobDetector::create(params);*/
-
+  RNG rng(12345);
   for(;;) //repeat forever
   {
     Mat frame;
@@ -63,14 +63,14 @@ int main(int argc, char* argv[])
     if(keypoints.size() > 0) {
       std::cout << "(" << keypoints[0].pt.x << ", " << keypoints[0].pt.y << ")" << std::endl;
     }
-    vector<vector<Point> > contours;
-    vector<Vec4i> hierarchy;
+    std::vector<std::vector<Point> > contours;
+    std::vector<Vec4i> hierarchy;
     findContours( frame, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
     /// Approximate contours to polygons + get bounding rects and circles
-    vector<vector<Point> > contours_poly( contours.size() );
-    vector<Rect> boundRect( contours.size() );
-    vector<Point2f>center( contours.size() );
-    vector<float>radius( contours.size() );
+    std::vector<std::vector<Point> > contours_poly( contours.size() );
+    std::vector<Rect> boundRect( contours.size() );
+    std::vector<Point2f>center( contours.size() );
+    std::vector<float>radius( contours.size() );
 
     for( int i = 0; i < contours.size(); i++ )
     { approxPolyDP( Mat(contours[i]), contours_poly[i], 3, true );
@@ -78,11 +78,11 @@ int main(int argc, char* argv[])
       minEnclosingCircle( (Mat)contours_poly[i], center[i], radius[i] );
     }
     /// Draw polygonal contour + bonding rects + circles
-    Mat drawing = Mat::zeros( threshold_output.size(), CV_8UC3 );
+    Mat drawing = Mat::zeros( frame.size(), CV_8UC3 );
     for( int i = 0; i< contours.size(); i++ )
     {
       Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
-      drawContours( drawing, contours_poly, i, color, 1, 8, vector<Vec4i>(), 0, Point() );
+      drawContours( drawing, contours_poly, i, color, 1, 8, std::vector<Vec4i>(), 0, Point() );
       rectangle( drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0 );
       circle( drawing, center[i], (int)radius[i], color, 2, 8, 0 );
     }
