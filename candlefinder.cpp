@@ -25,6 +25,7 @@ int main(int argc, char* argv[])
   }
 
   namedWindow("robovision",1); // computer output window
+  namedWindow("robovision2",1);
 
   /* Simple Blob Detector parameters
   SimpleBlobDetector::Params params;
@@ -92,7 +93,7 @@ int main(int argc, char* argv[])
     dst.create(frame.size(), frame.type());
     dst = Scalar::all(0);
     frame.copyTo(dst, frame);*/
-
+    imshow("robovision2", frame);
     imshow("robovision", drawing ); // show frame on computer output window
 
     /* Escape = kill program */
