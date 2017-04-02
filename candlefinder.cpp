@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 
   namedWindow("robovision",1); // computer output window
 
-  /* Simple Blob Detector parameters */
+  /* Simple Blob Detector parameters
   SimpleBlobDetector::Params params;
   // Change thresholds
   params.minThreshold = 10;
@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
   params.filterByArea = true;
   params.minArea = 50;
 
-  Ptr<SimpleBlobDetector> detector = SimpleBlobDetector::create(params);
+  Ptr<SimpleBlobDetector> detector = SimpleBlobDetector::create(params);*/
 
   for(;;) //repeat forever
   {
@@ -58,11 +58,17 @@ int main(int argc, char* argv[])
 
     /* Search for flame and draw a red circle around it */
     std::vector<KeyPoint> keypoints;
-    detector->detect( frame, keypoints);
-    drawKeypoints( frame, keypoints, frame, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
+    //detector->detect( frame, keypoints);
+    //drawKeypoints( frame, keypoints, frame, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
     if(keypoints.size() > 0) {
       std::cout << "(" << keypoints[0].pt.x << ", " << keypoints[0].pt.y << ")" << std::endl;
     }
+
+    Canny( frame, frame, thresh, thresh*ratio, 3 );
+    Mat dst;
+    dst.create(frame.size(), frame.type());
+    dst = Scalar::all(0);
+    frame.copyTo(dst, frame);
 
     imshow("robovision", frame ); // show frame on computer output window
 
