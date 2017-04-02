@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 
   /* Get camera feed */
   system(("./setExposure.sh "+ std::to_string(cameraNum)).c_str()); // sets exposure of video1 to 1
-  VideoCapture cap(CAMERAINTERFACE); // open camera
+  VideoCapture cap(cameraNum); // open camera
 
   if(!cap.isOpened()) {  // check if we succeeded
     std::cout << "it didn't open :(" << std::endl;
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     double maxValue = 255;
 
     // Binary Threshold
-    threshold(frame,frame, thresh, maxValue, THRESH_BINARY);
+    threshold(frame,frame, thresh, maxValue, 2);
 
     bitwise_not(frame, frame); // invert colors - you are looking for the light but this searches for dark
 
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
       std::cout << "(" << keypoints[0].pt.x << ", " << keypoints[0].pt.y << ")" << std::endl;
     }
 
-    Canny( frame, frame, thresh, thresh*ratio, 3 );
+    Canny( frame, frame, thresh, thresh*3, 3 );
     Mat dst;
     dst.create(frame.size(), frame.type());
     dst = Scalar::all(0);
